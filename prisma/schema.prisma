@@ -26,6 +26,7 @@ model User {
   email         String
   emailVerified Boolean   @default(false) @map("email_verified")
   image         String?
+  workoutDaysPerWeek  Int           @default(3)
   createdAt     DateTime
   updatedAt     DateTime
   gymWorkouts   GymWorkout[]
