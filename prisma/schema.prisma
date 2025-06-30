@@ -24,10 +24,12 @@ model User {
   id            String    @id
   name          String
   email         String
-  emailVerified Boolean
+  emailVerified Boolean   @default(false) @map("email_verified")
   image         String?
   createdAt     DateTime
   updatedAt     DateTime
+  gymWorkouts   GymWorkout[]
+  weeklyStreaks WeeklyStreak[]
   sessions      Session[]
   accounts      Account[]
 
@@ -78,4 +80,41 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model GymWorkout {
+  id             BigInt      @id @default(autoincrement())
+  userId         String
+  workoutName    String      @map("workout_name")
+  durationMinutes Int        @map("duration_minutes")
+  caloriesBurned Int?        @map("calories_burned")
+  workoutDate    DateTime    @map("workout_date")
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises      Exercise[]
+
+  @@map("gym_workout")
+}
+
+model WeeklyStreak {
+  id            BigInt      @id @default(autoincrement())
+  userId        String
+  weekStartDate DateTime    @map("week_start_date")
+  streakCount   Int         @default(0) @map("streak_count")
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("weekly_streak")
+}
+
+model Exercise {
+  id          BigInt      @id @default(autoincrement())
+  workoutId   BigInt
+  exerciseName String     @map("exercise_name")
+  sets        Int
+  reps        Int
+  weight      Float?
+  weightUnit  String      @default("kg") @map("weight_unit")
+  muscleGroup String      @map("muscle_group")
+  workout     GymWorkout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@map("exercise")
 }
